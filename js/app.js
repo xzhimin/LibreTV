@@ -728,6 +728,19 @@ async function search() {
             });
         }
 
+        // 关键词过滤：只保留任意字段包含搜索关键词的结果
+        const queryLower = query.toLowerCase();
+        allResults = allResults.filter(item => {
+            return Object.values(item).some(val =>
+                val != null && String(val).toLowerCase().includes(queryLower)
+            );
+        });
+
+        // 更新过滤后的结果计数
+        if (searchResultsCount) {
+            searchResultsCount.textContent = allResults.length;
+        }
+
         // 添加XSS保护，使用textContent和属性转义
         const safeResults = allResults.map(item => {
             const safeId = item.vod_id ? item.vod_id.toString().replace(/[^\w-]/g, '') : '';
